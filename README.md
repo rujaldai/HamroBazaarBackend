@@ -1,2 +1,2 @@
-# basic-login-node-app
-This is a basic register/ login node app for future use
+# hamrobazaar-api-backend
+This is the backend created for hamro bazaar app for college purpose
