@@ -10,7 +10,8 @@ module.exports = (function() {
         },
         exists: function (userType) {
             for (var key in UserTypeEnum) {
-                return UserTypeEnum[key] === userType;
+                if (UserTypeEnum[key] === userType)
+                    return true;
             }
             return false;
         }

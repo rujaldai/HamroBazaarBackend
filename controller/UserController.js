@@ -6,67 +6,85 @@ var UserType = require("../enums/UserTypeEnum");
 
 
 function validator(req, res, next) {
+	console.log(req.body.image);
     console.log("inside validator");
-	if (req.body.username === '' && req.body.password === '') {
+	if (req.body.email === '' && req.body.password === '') {
 		res.status(500);
-		res.json({status:404, message: 'username and password is required'});
-	} else if (req.body.username === '') {
-		console.log("username not found ");
+		res.json({status:404, message: 'email and password is required'});
+	} else if (req.body.fullname === '') {
+		console.log("fullname not found ");
 		res.status(500);
-		res.json({status:404, message: 'username is required'});
+		res.json({status:500, message: 'Fullname is required'});
 	} else if (req.body.password === '') {
 		console.log("password not found ");
 		res.status(500);
-        res.json({status:404, message: 'password is required'});
-	} else if (!UserType.exists(req.body.userType)) {
-        res.status(500);
-        res.json({status: 500, message: "User type invalid"});
-        return;
-    }
-
-	fetchUserByUsername(req.body.username)
+        res.json({status:500, message: 'password is required'});
+	} else {
+	fetchUserByUsername(req.body.email)
 	.then(function(result){
 		if (result) {
 			console.log("Username already exists.");
 			res.status(500);
-			res.json({"errorMessage": "Username already exists"});
+			res.json({status: "500", message: "Username already exists"});
 		} else {
 			next();	
 		}
 	})
+	} 
 }
+
+
 
 function passwordCheck() {
 
+}
+
+function getHashFromString(password) {
+	var saltRounds = 10;
+	return bcrypt.hash(password, saltRounds, function(err, hash) {
+		if (hash) {
+			console.log(hash);
+			return hash;
+		} else if (err) {
+
+			console.log(err);
+			res.json({message: "cannot generateHash"});
+		}
+	});
 }
 
 function generateHash(req, res, next) {
 	console.log("Inside generate hash");
 	var saltRounds = 10;
 	console.log(req.body.password);
-	console.log(req.body.username);
 	bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
 		if (hash) {
 			console.log(hash);
-			updateIntoUser(req.body.username, hash, req.body.userType);
-			res.json(hash);
+			updateIntoUser(req.body, hash);
+			res.json({token: hash});
 		} else if (err) {
 
 			console.log(err);
-			res.json({error: "cannot generateHash"});
+			res.json({message: "cannot generateHash"});
 		}
 	});
 }
 
-function updateIntoUser(username, hashedPassword, userType) {
+function updateIntoUser(user, hashedPassword) {
 	userSchema.userSchema.create({
-        username: username,
-        password: hashedPassword,
-        user_type: userType}).then(function(success) {
+        full_name: user.fullname,
+		password: hashedPassword,
+		email: user.email,
+		phone: user.phone,
+		mobile_phone: user.mobile,
+		address1: user.address1,
+		address2: user.address2,
+		address3: user.address3,
+		image: user.image}).then(function(success) {
 		if (success) {
 			console.log(success);
 		} else {
-			console.log("Inserted");
+			console.log("Not Inserted");
 		}
 	}).catch(function(err) {
 		console.log(err);
@@ -101,9 +119,9 @@ function deleteUser (req, res, next) {
 function fetchUserByUsername(username) {
 	return userSchema.userSchema.findOne({
 		where: {
-			username: username
+			email: username
 		}
 	});
 }
 
-module.exports = {validator, passwordCheck, generateHash, deleteUser, fetchUserByUsername};
+module.exports = {validator, passwordCheck, generateHash, deleteUser, fetchUserByUsername, getHashFromString};

@@ -14,9 +14,10 @@ const UserEnum = require("./enums/UserTypeEnum.js");
 console.log(UserEnum.MEMBER_USER);
 
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
 
 app.use("/api-docs", swaggerConfig.swaggerUI.serve, swaggerConfig.swaggerUI.setup(swaggerConfig.swaggerSpecs));
 app.use("/api", allRoutes);
 
-app.listen(3023);
-console.log("app running in 3023");
+app.listen(3000);
+console.log("app running in 3000");

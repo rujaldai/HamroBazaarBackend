@@ -1,5 +1,5 @@
 module.exports = (function() {
-    var userController = require("./UserController.js");
+var userController = require("./UserController.js");
 var bcrypt = require("bcrypt");
 var users = require("../entity/UserSchema.js");
 var jwt = require("jsonwebtoken");
@@ -11,11 +11,11 @@ var secretOrPrivateKey = "SecretKeyCanBeAnythingWhichIsUsedWhileEncodingORdEcodi
 function validator(req, res, next) {
 	console.log("inside validator");
 	if (req.body.username === '' || req.body.password === '') {
+		res.status(500);
 		res.json({message: "username or password not found."});
 	}
+	console.log(req.body);
 
-	console.log(req.body.username);
-	console.log(users);
 	userController.fetchUserByUsername(req.body.username)
 	.then(function(result) {
 		console.log("successfully found");
@@ -25,6 +25,9 @@ function validator(req, res, next) {
 		}
 		console.log(result + " here");
 		console.log(result.dataValues);
+
+		//Because we need it after login
+		req.body.imagePath = result.dataValues.image;
 		req.hashedPassword = result.dataValues.password;
 		next();
 		
@@ -37,15 +40,18 @@ function validator(req, res, next) {
 function passwordChecker(req, res, next) {
 	console.log(req.body.password);
 	console.log(req.dataValues);
-	bcrypt.compare(req.hashedPassword, req.hashedPassword)
-		.then(function(result) {
-			console.log(result);
+	console.log(req.hashedPassword);
+	var saltRounds = 10;
+	bcrypt.compare(req.body.password, req.hashedPassword, function(err, result) {
+		if(result) {
 			next();
-		})
-		.catch(function(error) {
-			console.log(error);
-		})
-	
+		} else {
+			console.log("Forbidden");
+			res.status(403);
+			res.send({status: "403", message: "username and password donot match"});
+		}
+	})
+		
 }
 
 function jwtTokenGen(req, res, next) {
@@ -54,14 +60,17 @@ function jwtTokenGen(req, res, next) {
 	 * sign token using payload below so that it can be decoded to get payload
 	 * payload is user details (usually)
 	 */
+
+	 console.log("email: " + req.body.email);
+	 console.log("username: " + req.body.username);
+	 
 	var payload = {
-		username: req.body.username, 
+		username: req.body.email ? req.body.email : req.body.username, 
 		userLevel: "superadmin"
 	}
 	jwt.sign(payload, secretOrPrivateKey, {expiresIn: "10h"}, function(err, result) {
-		console.log(result);
-		console.log(err);
-		res.json({"userToken": result})
+		res.status(200);
+		res.json({token: result, status: 200, imagePath: req.body.imagePath});
 	});
 }
 
