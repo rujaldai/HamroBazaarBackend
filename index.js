@@ -3,15 +3,16 @@ var bodyParser =  require("body-parser");
 var databaseConfig = require("./databaseConfig/databaseConnection.js");
 var swaggerConfig = require("./swagger_definitions/swaggerDefinitions.js");
 var allRoutes = require("./end_points/AllRoutes.js");
+var advertisementSchema = require("./entity/AdvertisementSchema");
 // console.log(databaseConfig);
 
 var sequelize = databaseConfig.sequelize;
 var Sequelize = databaseConfig.Sequelize;
 var app = express();
 
-const UserEnum = require("./enums/UserTypeEnum.js");
+// const UserEnum = require("./enums/UserTypeEnum.js");
 
-console.log(UserEnum.MEMBER_USER);
+// console.log(UserEnum.MEMBER_USER);
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
