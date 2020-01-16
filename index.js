@@ -10,6 +10,8 @@ var sequelize = databaseConfig.sequelize;
 var Sequelize = databaseConfig.Sequelize;
 var app = express();
 
+global._baseDir = __dirname;
+
 // const UserEnum = require("./enums/UserTypeEnum.js");
 
 // console.log(UserEnum.MEMBER_USER);

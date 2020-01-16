@@ -42,7 +42,7 @@ var userSchema = sequelize.define('user',
 		type: Sequelize.STRING(60)
     },
     image: {
-		type: Sequelize.STRING(100)
+		type: Sequelize.STRING
 	}    		
 }, {
 	//Options

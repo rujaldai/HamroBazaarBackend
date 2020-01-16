@@ -18,11 +18,14 @@ function validator(req, res, next) {
 
 	userController.fetchUserByUsername(req.body.username)
 	.then(function(result) {
+		console.log(req.body.username);
 		console.log("successfully found");
-		if(!result) {
+		if(result == null) {
+
 			res.status(404);
-			res.json("User not found");
+			res.json({status: 500, message: "User not found"});
 		}
+		console.log(result);
 		console.log(result + " here");
 		console.log(result.dataValues);
 

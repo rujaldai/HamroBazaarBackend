@@ -5,7 +5,6 @@ var advertisementSchema = require('../entity/AdvertisementSchema');
 
 function addAdvertisement(req, res) {
     var advertisement = req.body;
-    console.log(advertisement);
 	advertisementSchema.advertisementSchema.create({
         name: advertisement.name,
         price: advertisement.price,
@@ -13,7 +12,6 @@ function addAdvertisement(req, res) {
         product_type: advertisement.productType,
         type: advertisement.type}).then(function(success) {
 		if (success) {
-            console.log(success);
             res.status(200);
             res.json({status: 200, message: "Successfully Inserted!"});
 		} else {
@@ -33,7 +31,6 @@ function getAdvertisements(req, res) {
     .then(function(result){
         var allAdvertisements = [];
         result.forEach(element => {
-            console.log(element.dataValues);
             element.dataValues.productType = element.dataValues.product_type;
             element.dataValues.imageId = element.dataValues.image_id;
             allAdvertisements.push(element.dataValues);
