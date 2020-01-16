@@ -6,7 +6,6 @@ var UserType = require("../enums/UserTypeEnum");
 
 
 function validator(req, res, next) {
-	console.log(req.body.image);
     console.log("inside validator");
 	if (req.body.email === '' && req.body.password === '') {
 		res.status(500);
@@ -43,12 +42,9 @@ function getHashFromString(password) {
 	var saltRounds = 10;
 	return bcrypt.hash(password, saltRounds, function(err, hash) {
 		if (hash) {
-			console.log(hash);
 			return hash;
 		} else if (err) {
-
-			console.log(err);
-			res.json({message: "cannot generateHash"});
+			res.json({status: 500, message: "cannot generateHash"});
 		}
 	});
 }
@@ -82,12 +78,12 @@ function updateIntoUser(user, hashedPassword) {
 		address3: user.address3,
 		image: user.image}).then(function(success) {
 		if (success) {
-			console.log(success);
+			console.log("user successfully inserted");
 		} else {
-			console.log("Not Inserted");
+			console.log("User could not be Inserted");
 		}
 	}).catch(function(err) {
-		console.log(err);
+		console.log("err while inserting user");
 	})
 }
 
